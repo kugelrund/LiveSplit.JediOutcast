@@ -15,7 +15,7 @@ state("jk2sp", "Speed Outcast v0.3")
 
 start
 {
-	return current.map == 17 && current.start == 4;
+	return current.map == 17 && (current.start == 4 && old.start != 4);
 }
 
 reset
