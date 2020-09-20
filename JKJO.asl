@@ -1,11 +1,16 @@
-state("jk2sp")
+state("jk2sp", "Vanilla")
 {
-	int isLoading      :  0x41D45C;
-	int Loading2       :  0xEF5200;
 	int map            :  0x5E6098;
 	int finalsplit     :  0x41D59C;
 	int start          :  0x40D370;
 	string9 mapString  :  0x4226F9;
+}
+
+state("jk2sp", "Speed Outcast v0.3")
+{
+	int map            :  0xC14F98;
+	int start          :  0x4B87B0;
+	int ingameTime     :  0x100CA30;
 }
 
 start
@@ -19,21 +24,33 @@ reset
 }
 split
 {
-	return current.map != old.map && current.map > 2 ||
-		   current.mapString == "yavin_fin" && current.finalsplit == 1;
+	if (version == "Vanilla")
+	{
+		return current.map != old.map && current.map > 2 ||
+		       current.mapString == "yavin_fin" && current.finalsplit == 1;
+	}
+	return current.map != old.map && current.map > 2;
 }
 
 isLoading
 {
-	return current.isLoading == 0 || current.isLoading == 1 && current.Loading2 == 0;
+	return true;
 }
 
 init
 {
-    timer.IsGameTimePaused = false;
+	version = "Vanilla";
+	if (game.MainModule.FileVersionInfo.ProductName == "Speed Outcast")
+	{
+		version = "Speed Outcast v0.3";
+	}
 }
 
-exit
+gameTime
 {
-    timer.IsGameTimePaused = true;
+	if (version == "Vanilla")
+	{
+		return TimeSpan.FromMilliseconds(0);
+	}
+	return TimeSpan.FromMilliseconds(current.ingameTime);
 }
