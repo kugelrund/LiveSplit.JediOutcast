@@ -13,9 +13,19 @@ state("jk2sp", "Speed Outcast v0.3")
 	int ingameTime     :  0x100CA30;
 }
 
+state("jk2sp", "Speed Outcast v0.5")
+{
+	int map            :  0xC138D8;
+	int ingameTime     :  0x100B940;
+}
+
 start
 {
-	return current.map == 17 && (current.start == 4 && old.start != 4);
+	if (version == "Vanilla")
+	{
+		return current.map == 17 && (current.start == 4 && old.start != 4);
+	}
+	return old.ingameTime == 0 && current.ingameTime != 0;
 }
 
 reset
@@ -42,7 +52,15 @@ init
 	version = "Vanilla";
 	if (game.MainModule.FileVersionInfo.ProductName == "Speed Outcast")
 	{
-		version = "Speed Outcast v0.3";
+		if (game.MainModule.FileVersionInfo.FileMajorPart == 0 &&
+		    game.MainModule.FileVersionInfo.FileMinorPart >= 5)
+		{
+			version = "Speed Outcast v0.5";
+		}
+		else
+		{
+			version = "Speed Outcast v0.3";
+		}
 	}
 }
 
