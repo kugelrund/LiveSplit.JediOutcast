@@ -59,7 +59,7 @@ init
 	if (game.MainModule.FileVersionInfo.ProductName == "Speed Outcast")
 	{
 		if (game.MainModule.FileVersionInfo.FileMajorPart == 0 &&
-		    game.MainModule.FileVersionInfo.MinorPart >= 6)
+		    game.MainModule.FileVersionInfo.FileMinorPart >= 6)
 		{
 			version = "Speed Outcast v0.6";
 		}
