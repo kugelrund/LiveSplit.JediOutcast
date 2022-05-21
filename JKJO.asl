@@ -25,6 +25,12 @@ state("jk2sp", "Speed Outcast v0.6")
 	int ingameTime     :  0x100ea60;
 }
 
+state("jk2sp", "Speed Outcast v0.7")
+{
+	int map            :  0xC159F8;
+	int ingameTime     :  0x100DA60;
+}
+
 start
 {
 	if (version == "Vanilla")
@@ -59,7 +65,12 @@ init
 	if (game.MainModule.FileVersionInfo.ProductName == "Speed Outcast")
 	{
 		if (game.MainModule.FileVersionInfo.FileMajorPart == 0 &&
-		    game.MainModule.FileVersionInfo.FileMinorPart >= 6)
+		    game.MainModule.FileVersionInfo.FileMinorPart >= 7)
+		{
+			version = "Speed Outcast v0.7";
+		}
+		else if (game.MainModule.FileVersionInfo.FileMajorPart == 0 &&
+		         game.MainModule.FileVersionInfo.FileMinorPart >= 6)
 		{
 			version = "Speed Outcast v0.6";
 		}
