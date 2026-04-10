@@ -37,6 +37,10 @@ state("jk2sp", "Speed Outcast v1.0")
 	int ingameTime     :  0x1013A60;
 }
 
+state("jk2sp", "Speed Outcast Automatic")
+{
+}
+
 start
 {
 	if (version == "Vanilla")
@@ -65,13 +69,43 @@ isLoading
 	return true;
 }
 
+update
+{
+	if (version == "Speed Outcast Automatic")
+	{
+		current.map = memory.ReadValue<int>((IntPtr)vars.mapAddress);
+		current.ingameTime = memory.ReadValue<int>((IntPtr)vars.ingameTimeAddress);
+	}
+}
+
 init
 {
 	version = "Vanilla";
 	if (game.MainModule.FileVersionInfo.ProductName == "Speed Outcast")
 	{
-		if (game.MainModule.FileVersionInfo.FileMajorPart == 1 &&
-                    game.MainModule.FileVersionInfo.FileMinorPart >= 0)
+		var scanner = new SignatureScanner(
+			game, game.MainModule.BaseAddress, game.MainModule.ModuleMemorySize
+		);
+		var magic_id = new byte[] {
+			0x6D, 0x61, 0x67, 0x69, 0x63, 0x20,                    // magic
+			0x69, 0x64, 0x20,                                      // id
+			0x66, 0x6F, 0x72, 0x20,                                // for
+			0x73, 0x70, 0x65, 0x65, 0x64, 0x72, 0x75, 0x6E, 0x20,  // speedrun
+			0x64, 0x61, 0x74, 0x61, 0x20,                          // data
+			0x66, 0x6F, 0x72, 0x20,                                // for
+			0x6C, 0x69, 0x76, 0x65, 0x73, 0x70, 0x6C, 0x69, 0x74   // livesplit
+		};
+		var ptr = scanner.Scan(new SigScanTarget(magic_id));
+
+		if (ptr != IntPtr.Zero)
+		{
+			version = "Speed Outcast Automatic";
+			ptr += magic_id.Length;
+			vars.mapAddress = ptr;
+			vars.ingameTimeAddress = vars.mapAddress + 4;
+		}
+		else if (game.MainModule.FileVersionInfo.FileMajorPart >= 1 &&
+		         game.MainModule.FileVersionInfo.FileMinorPart >= 0)
 		{
 			version = "Speed Outcast v1.0";
 		}
